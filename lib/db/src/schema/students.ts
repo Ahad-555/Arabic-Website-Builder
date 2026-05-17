@@ -6,6 +6,7 @@ export const studentsTable = pgTable("students", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   studentId: text("student_id").notNull().unique(),
+  college: text("college").notNull().default("كلية الحاسبات وتقنية المعلومات"),
   major: text("major").notNull(),
   year: integer("year").notNull(),
   bio: text("bio"),

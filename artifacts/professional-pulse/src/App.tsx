@@ -1,49 +1,42 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Layout } from "@/components/layout";
-import Dashboard from "@/pages/dashboard";
-import StudentsList from "@/pages/students-list";
-import StudentProfile from "@/pages/student-profile";
-import StudentSkills from "@/pages/student-skills";
-import ProjectsList from "@/pages/projects-list";
-import ProjectDetail from "@/pages/project-detail";
-import CertificatePage from "@/pages/certificate";
-import CertificateVerify from "@/pages/certificate-verify";
-import NotFound from "@/pages/not-found";
+import LoginPage from "@/pages/login";
+import StudentApp from "@/pages/student-app";
+import SupervisorApp from "@/pages/supervisor-app";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
-function Router() {
-  return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/students" component={StudentsList} />
-        <Route path="/students/:id" component={StudentProfile} />
-        <Route path="/students/:id/skills" component={StudentSkills} />
-        <Route path="/projects" component={ProjectsList} />
-        <Route path="/projects/:id" component={ProjectDetail} />
-        <Route path="/certificate/:id" component={CertificatePage} />
-        <Route path="/certificate/verify/:code" component={CertificateVerify} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
-  );
+export type StudentSession = { type: "student"; id: number; name: string; major: string; college: string };
+export type Session = StudentSession | { type: "supervisor" } | null;
+
+function AppInner() {
+  const [session, setSession] = useState<Session>(() => {
+    try {
+      const s = localStorage.getItem("pulse_session");
+      return s ? JSON.parse(s) : null;
+    } catch { return null; }
+  });
+
+  const login = (s: Session) => {
+    setSession(s);
+    localStorage.setItem("pulse_session", JSON.stringify(s));
+  };
+
+  const logout = () => {
+    setSession(null);
+    localStorage.removeItem("pulse_session");
+    queryClient.clear();
+  };
+
+  if (!session) return <LoginPage onLogin={login} />;
+  if (session.type === "supervisor") return <SupervisorApp onLogout={logout} />;
+  return <StudentApp student={session} onLogout={logout} />;
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <AppInner />
     </QueryClientProvider>
   );
 }
-
-export default App;
