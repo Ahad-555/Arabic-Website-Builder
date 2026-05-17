@@ -3,20 +3,30 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: النبض المهني - Professional Pulse API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: students
+    description: Student management
+  - name: skills
+    description: Skills management
+  - name: projects
+    description: Club projects
+  - name: certificates
+    description: Competency certificates
+  - name: dashboard
+    description: Dashboard stats
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +34,430 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # Students
+  /students:
+    get:
+      operationId: listStudents
+      tags: [students]
+      summary: List all students
+      responses:
+        "200":
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+    post:
+      operationId: createStudent
+      tags: [students]
+      summary: Register a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /students/{id}:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get student by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  # Skills
+  /skills:
+    get:
+      operationId: listSkills
+      tags: [skills]
+      summary: List all skills
+      responses:
+        "200":
+          description: List of skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skill"
+
+  /students/{id}/skills:
+    get:
+      operationId: getStudentSkills
+      tags: [skills]
+      summary: Get student skill profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentSkill"
+    post:
+      operationId: addStudentSkill
+      tags: [skills]
+      summary: Add or update a student skill
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentSkillInput"
+      responses:
+        "201":
+          description: Skill added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentSkill"
+
+  /students/{id}/skill-gap:
+    get:
+      operationId: getSkillGap
+      tags: [skills]
+      summary: Get skill gap analysis for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Skill gap analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillGapAnalysis"
+
+  /students/{id}/investment-value:
+    get:
+      operationId: getInvestmentValue
+      tags: [skills]
+      summary: Get professional investment value for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Investment value
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvestmentValue"
+
+  /students/{id}/career-paths:
+    get:
+      operationId: getCareerPaths
+      tags: [skills]
+      summary: Get recommended career paths for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Career path recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CareerPath"
+
+  # Projects
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Submit a project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Project submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get project by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}/verify:
+    post:
+      operationId: verifyProject
+      tags: [projects]
+      summary: Run AI integrity check on a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectVerifyInput"
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectVerification"
+
+  /projects/{id}/quiz:
+    post:
+      operationId: generateProjectQuiz
+      tags: [projects]
+      summary: Generate AI interrogation quiz for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Quiz generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectQuiz"
+
+  /projects/{id}/quiz/submit:
+    post:
+      operationId: submitProjectQuiz
+      tags: [projects]
+      summary: Submit quiz answers and get trust stamp
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizSubmission"
+      responses:
+        "200":
+          description: Quiz result and trust stamp
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizResult"
+
+  /students/{id}/projects:
+    get:
+      operationId: getStudentProjects
+      tags: [projects]
+      summary: Get all projects for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+
+  # Certificates
+  /students/{id}/certificate:
+    get:
+      operationId: getCertificate
+      tags: [certificates]
+      summary: Get competency certificate for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Certificate data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Certificate"
+        "404":
+          description: No certificate yet
+
+  /certificates/{code}:
+    get:
+      operationId: getCertificateByCode
+      tags: [certificates]
+      summary: Get certificate by QR code (public)
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Certificate found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Certificate"
+
+  # Dashboard
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get platform-wide statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/top-skills:
+    get:
+      operationId: getTopSkills
+      tags: [dashboard]
+      summary: Get top skills in demand
+      responses:
+        "200":
+          description: Top skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopSkill"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent platform activity
+      responses:
+        "200":
+          description: Recent activity feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +468,426 @@ components:
       required:
         - status
 
+    Student:
+      type: object
+      required: [id, name, studentId, major, year, overallScore, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        studentId:
+          type: string
+        major:
+          type: string
+        year:
+          type: integer
+        bio:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        overallScore:
+          type: number
+        readinessLevel:
+          type: string
+          enum: [beginner, developing, ready, advanced]
+        createdAt:
+          type: string
+
+    StudentInput:
+      type: object
+      required: [name, studentId, major, year]
+      properties:
+        name:
+          type: string
+        studentId:
+          type: string
+        major:
+          type: string
+        year:
+          type: integer
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+
+    StudentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        major:
+          type: string
+        year:
+          type: integer
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+
+    Skill:
+      type: object
+      required: [id, name, category, demandLevel, marketWeight]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+          enum: [programming, design, data, management, communication, other]
+        demandLevel:
+          type: string
+          enum: [low, medium, high, critical]
+        marketWeight:
+          type: number
+        description:
+          type: ["string", "null"]
+
+    StudentSkill:
+      type: object
+      required: [id, studentId, skillId, skillName, category, level, verified, score]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        skillId:
+          type: integer
+        skillName:
+          type: string
+        category:
+          type: string
+        level:
+          type: integer
+          description: 1-5 proficiency level
+        verified:
+          type: boolean
+        score:
+          type: number
+        verifiedAt:
+          type: ["string", "null"]
+
+    StudentSkillInput:
+      type: object
+      required: [skillId, level]
+      properties:
+        skillId:
+          type: integer
+        level:
+          type: integer
+
+    SkillGapAnalysis:
+      type: object
+      required: [studentId, overallReadiness, gaps, strengths]
+      properties:
+        studentId:
+          type: integer
+        overallReadiness:
+          type: number
+        gaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/SkillGap"
+        strengths:
+          type: array
+          items:
+            type: string
+
+    SkillGap:
+      type: object
+      required: [skillName, currentLevel, requiredLevel, gap, priority]
+      properties:
+        skillName:
+          type: string
+        currentLevel:
+          type: number
+        requiredLevel:
+          type: number
+        gap:
+          type: number
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        recommendation:
+          type: string
+
+    InvestmentValue:
+      type: object
+      required: [studentId, hourlyRateMin, hourlyRateMax, hourlyRateEstimate, currency, rarityScore, demandScore]
+      properties:
+        studentId:
+          type: integer
+        hourlyRateMin:
+          type: number
+        hourlyRateMax:
+          type: number
+        hourlyRateEstimate:
+          type: number
+        currency:
+          type: string
+        rarityScore:
+          type: number
+        demandScore:
+          type: number
+        marketInsight:
+          type: string
+
+    CareerPath:
+      type: object
+      required: [sector, matchScore, roles, demandLevel]
+      properties:
+        sector:
+          type: string
+        matchScore:
+          type: number
+        roles:
+          type: array
+          items:
+            type: string
+        demandLevel:
+          type: string
+          enum: [low, medium, high, critical]
+        salaryRange:
+          type: string
+        description:
+          type: string
+
+    Project:
+      type: object
+      required: [id, studentId, studentName, title, description, technologies, status, trustStamp, createdAt]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        technologies:
+          type: array
+          items:
+            type: string
+        githubUrl:
+          type: ["string", "null"]
+        demoUrl:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, analyzing, verified, rejected]
+        trustStamp:
+          type: boolean
+        aiScore:
+          type: ["number", "null"]
+        integrityNotes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ProjectInput:
+      type: object
+      required: [studentId, title, description, technologies]
+      properties:
+        studentId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        technologies:
+          type: array
+          items:
+            type: string
+        githubUrl:
+          type: string
+        demoUrl:
+          type: string
+
+    ProjectVerifyInput:
+      type: object
+      required: [codeSnippet]
+      properties:
+        codeSnippet:
+          type: string
+        projectDescription:
+          type: string
+
+    ProjectVerification:
+      type: object
+      required: [projectId, passed, aiScore, summary, originality]
+      properties:
+        projectId:
+          type: integer
+        passed:
+          type: boolean
+        aiScore:
+          type: number
+        summary:
+          type: string
+        originality:
+          type: number
+        integrityNotes:
+          type: string
+
+    ProjectQuiz:
+      type: object
+      required: [projectId, questions]
+      properties:
+        projectId:
+          type: integer
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizQuestion"
+
+    QuizQuestion:
+      type: object
+      required: [id, question, options]
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+
+    QuizSubmission:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizAnswer"
+
+    QuizAnswer:
+      type: object
+      required: [questionId, answer]
+      properties:
+        questionId:
+          type: integer
+        answer:
+          type: string
+
+    QuizResult:
+      type: object
+      required: [projectId, passed, score, feedback, trustStampGranted]
+      properties:
+        projectId:
+          type: integer
+        passed:
+          type: boolean
+        score:
+          type: number
+        feedback:
+          type: string
+        trustStampGranted:
+          type: boolean
+
+    Certificate:
+      type: object
+      required: [id, studentId, studentName, major, overallScore, qrCode, skills, projects, issuedAt]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        major:
+          type: string
+        overallScore:
+          type: number
+        readinessLevel:
+          type: string
+        qrCode:
+          type: string
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/CertifiedSkill"
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/CertifiedProject"
+        issuedAt:
+          type: string
+
+    CertifiedSkill:
+      type: object
+      required: [name, level, verified, aiVerified]
+      properties:
+        name:
+          type: string
+        level:
+          type: integer
+        verified:
+          type: boolean
+        aiVerified:
+          type: boolean
+
+    CertifiedProject:
+      type: object
+      required: [title, technologies, trustStamp]
+      properties:
+        title:
+          type: string
+        technologies:
+          type: array
+          items:
+            type: string
+        trustStamp:
+          type: boolean
+
+    DashboardStats:
+      type: object
+      required: [totalStudents, verifiedProjects, averageReadiness, certificatesIssued, topSector]
+      properties:
+        totalStudents:
+          type: integer
+        verifiedProjects:
+          type: integer
+        averageReadiness:
+          type: number
+        certificatesIssued:
+          type: integer
+        topSector:
+          type: string
+        studentsReadyForWork:
+          type: integer
+        skillsTracked:
+          type: integer
+
+    TopSkill:
+      type: object
+      required: [name, demandLevel, studentsCount, marketDemand]
+      properties:
+        name:
+          type: string
+        demandLevel:
+          type: string
+        studentsCount:
+          type: integer
+        marketDemand:
+          type: number
+
+    ActivityItem:
+      type: object
+      required: [id, type, message, studentName, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [project_verified, skill_added, certificate_issued, quiz_passed, student_joined]
+        message:
+          type: string
+        studentName:
+          type: string
+        createdAt:
+          type: string
