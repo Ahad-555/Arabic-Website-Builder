@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrainCircuit, ShieldCheck, ArrowLeft } from "lucide-react";
+import { BrainCircuit, ShieldCheck, ArrowLeft, Eye, Building2 } from "lucide-react";
 import type { Session } from "@/App";
 
 interface Props { onLogin: (s: Session) => void; }
@@ -44,7 +44,7 @@ export default function LoginPage({ onLogin }: Props) {
         <p className="text-gray-500 mt-1 text-sm">منصة جامعة الحدود الشمالية لتوثيق المهارات</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-sm">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-sm mb-4">
         {mode === "student" ? (
           <form onSubmit={handleStudentLogin}>
             <h2 className="text-xl font-bold text-gray-900 mb-1 text-right">تسجيل الدخول</h2>
@@ -96,6 +96,23 @@ export default function LoginPage({ onLogin }: Props) {
           </form>
         )}
       </div>
+
+      {/* Future Vision / Partner button */}
+      <button
+        onClick={() => onLogin({ type: "partner" })}
+        className="flex items-center gap-2.5 bg-white border border-gray-200 hover:border-green-300 hover:bg-green-50 rounded-2xl px-5 py-3 text-sm transition-all group shadow-sm w-full max-w-sm"
+      >
+        <div className="flex-1 text-right">
+          <div className="font-bold text-gray-700 group-hover:text-green-700 transition-colors text-xs mb-0.5">
+            الرؤية المستقبلية — الشراكات المجتمعية
+          </div>
+          <div className="text-gray-400 text-xs">لوحة استعراض الكفاءات للجهات الشريكة (للقراءة فقط)</div>
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Building2 className="w-4 h-4 text-gray-400 group-hover:text-green-600 transition-colors" />
+          <Eye className="w-4 h-4 text-gray-400 group-hover:text-green-600 transition-colors" />
+        </div>
+      </button>
     </div>
   );
 }

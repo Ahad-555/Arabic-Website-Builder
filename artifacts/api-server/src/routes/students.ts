@@ -73,17 +73,25 @@ router.patch("/students/:id", async (req, res): Promise<void> => {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const parsed = UpdateStudentBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
+  // Build update payload manually so college is always included
+  const body = req.body as { name?: string; major?: string; college?: string; year?: number; bio?: string };
+  const updateData: Record<string, unknown> = {};
+  if (body.name !== undefined) updateData.name = body.name;
+  if (body.major !== undefined) updateData.major = body.major;
+  if (body.college !== undefined) updateData.college = body.college;
+  if (body.year !== undefined) updateData.year = body.year;
+  if (body.bio !== undefined) updateData.bio = body.bio;
+
+  if (Object.keys(updateData).length === 0) {
+    res.status(400).json({ error: "No fields to update" });
     return;
   }
-  const [student] = await db.update(studentsTable).set(parsed.data).where(eq(studentsTable.id, params.data.id)).returning();
+  const [student] = await db.update(studentsTable).set(updateData).where(eq(studentsTable.id, params.data.id)).returning();
   if (!student) {
     res.status(404).json({ error: "Student not found" });
     return;
   }
-  res.json(UpdateStudentResponse.parse({ ...student, createdAt: student.createdAt.toISOString() }));
+  res.json({ ...student, createdAt: student.createdAt.toISOString() });
 });
 
 router.delete("/students/:id", async (req, res): Promise<void> => {
