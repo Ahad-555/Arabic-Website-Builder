@@ -16,6 +16,7 @@ export const projectsTable = pgTable("projects", {
   aiScore: real("ai_score"),
   integrityNotes: text("integrity_notes"),
   quizQuestions: text("quiz_questions"),
+  imageData: text("image_data"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
