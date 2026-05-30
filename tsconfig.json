@@ -1,23 +1,15 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-  "noImplicitAny": false,
-  "strict": false,
-  "skipLibCheck": true
-}
+    "noImplicitAny": false,
+    "strict": false,
+    "skipLibCheck": true
+  },
   "files": [],
   "references": [
-    {
-      "path": "./lib/db"
-    },
-    {
-      "path": "./lib/api-client-react"
-    },
-    {
-      "path": "./lib/api-zod"
-    },
-    {
-      "path": "./lib/integrations-openai-ai-server"
-    }
+    { "path": "./lib/db" },
+    { "path": "./lib/api-client-react" },
+    { "path": "./lib/api-zod" },
+    { "path": "./lib/integrations-openai-ai-server" }
   ]
 }
